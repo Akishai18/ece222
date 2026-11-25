@@ -339,13 +339,10 @@ DISPLAY_BYTE:
 
     or t4, t4, t2   # the two halves together are the full GPIO pattern
 
-    # read modify write so the seven segment pins are left alone. the ISR owns those
-    # pins now and can fire at any point, so a blind write would wipe its digit.
-    #
-    # the mask alone is not enough. the read and the write are separate instructions,
-    # so a press landing between them would update the digit and then have it
-    # overwritten by the stale copy in t2. only the main program calls this routine,
-    # so closing MIE across the sequence is always safe to undo
+    # read modify write so only the LED bar bits change, the 7 seg belongs to the ISR now
+    # the mask alone is not enough, the lw and sw are separate so a press landing between
+    # them would get its digit overwritten by the stale copy in t2. clearing MIE closes
+    # that window, and only the main program calls this so turning it back on is safe
     csrci mstatus, 8   # clear mstatus.MIE, nothing can land inside the next six instructions
     li t0, GPIO_BASE_CTRL_ADDR
     lw t2, GPIO_OUTPUT_VAL(t0)  # what the pins are doing right now
