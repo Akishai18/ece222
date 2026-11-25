@@ -228,6 +228,7 @@ Main_Loop:
 
 # Interrupt Service Routine (ISR) for S1 and S2 pushbuttons
 # In Step-2, only steup S1. In Step-3, setup both S1 and S2.  
+.align 2                                  # mtvec needs the handler on a 4 byte boundary
 Buttons_ISR:
 # ----------------------------- Save Registers to Stack -----------------------------
 
